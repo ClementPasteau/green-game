@@ -49,6 +49,12 @@ var WorldScene = new Phaser.Class({
     var grass = map.createStaticLayer("Grass", tiles, 0, 0);
     var obstacles = map.createStaticLayer("Obstacles", tiles, 0, 0);
 
+    // create the score
+    scoreText = this.add.text(8, 8, "resources: 0", {
+      fontSize: "12px",
+      fill: "#000"
+    });
+
     // make all tiles in obstacles collidable
     obstacles.setCollisionByExclusion([-1]);
 
@@ -120,6 +126,10 @@ var WorldScene = new Phaser.Class({
   },
   update: function(time, delta) {
     //    this.controls.update(delta);
+
+    // update score position
+    scoreText.x = this.cameras.main.scrollX + 8;
+    scoreText.y = this.cameras.main.scrollY + 8;
 
     this.player.body.setVelocity(0);
 
