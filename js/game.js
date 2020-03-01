@@ -18,8 +18,8 @@ var BootScene = new Phaser.Class({
       frameHeight: 27
     });
     this.load.spritesheet("spell", "assets/spell.png", {
-      frameWidth: 26,
-      frameHeight: 27
+      frameWidth: 24.5,
+      frameHeight: 24
     });
   },
 
@@ -98,7 +98,7 @@ var WorldScene = new Phaser.Class({
     this.anims.create({
       key: "space",
       frames: this.anims.generateFrameNumbers("spell", {
-        frames: [13, 14, 15, 16, 17, 18, 19]
+        frames: [12, 13, 14, 15, 16, 17]
       }),
       frameRate: 10,
       repeat: -1
@@ -122,7 +122,6 @@ var WorldScene = new Phaser.Class({
 
     // user input
     this.cursors = this.input.keyboard.createCursorKeys();
-    //addKeys( {'space' : Phaser.KeyCode.SPACEBAR } );
   },
   update: function(time, delta) {
     //    this.controls.update(delta);
@@ -158,6 +157,10 @@ var WorldScene = new Phaser.Class({
       this.player.anims.play("up", true);
     } else if (this.cursors.down.isDown) {
       this.player.anims.play("down", true);
+    } else if (this.cursors.space.isDown) {
+      this.player.anims.play("space", true);
+    } else if (this.cursors..isDown) {
+      this.player.anims.play("space", true);
     } else {
       this.player.anims.stop();
     }
