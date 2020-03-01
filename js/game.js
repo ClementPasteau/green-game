@@ -68,6 +68,9 @@ var WorldScene = new Phaser.Class({
       fill: "#000"
     });
 
+    // Track space key toggle
+    this.spaceKeyWasDown = false;
+
     // add resources
     resources = this.physics.add.group({
       key: "resource",
@@ -203,13 +206,16 @@ var WorldScene = new Phaser.Class({
     }
 
     // Create building
-    if (this.cursors.space.isDown) {
+    if (this.spaceKeyWasDown && !this.cursors.space.isDown) {
       if (this.score >= 10) {
         this.buildings.create(this.player.x, this.player.y, "building");
         this.score -= 10;
         this.scoreText.setText(`resources: ${this.score}`);
       }
     }
+
+    // Update space key state
+    this.spaceKeyWasDown = this.cursors.space.isDown;
   }
 });
 
