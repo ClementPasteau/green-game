@@ -10,6 +10,9 @@ var BootScene = new Phaser.Class({
     this.load.image("tiles", "assets/map/spritesheet.png");
     this.load.image("tiles-pokemon", "assets/map/spritesheet-pokemon.png");
 
+    this.load.image("resource", "assets/green-orb.png");
+    this.load.image("building", "assets/center.png");
+
     // map in json format
     this.load.tilemapTiledJSON("map", "assets/map/map.json");
 
@@ -29,6 +32,12 @@ var BootScene = new Phaser.Class({
     this.scene.start("WorldScene");
   }
 });
+
+function collectResource(player, resource) {
+  resource.disableBody(true, true);
+  this.score += 10;
+  this.scoreText.setText(`resources: ${this.score}`);
+}
 
 var WorldScene = new Phaser.Class({
   Extends: Phaser.Scene,
@@ -53,13 +62,28 @@ var WorldScene = new Phaser.Class({
     var trees = map.createStaticLayer("Trees", tiles, 0, 0);
 
     // create the score
-    scoreText = this.add.text(8, 8, "resources: 0", {
+    this.score = 0;
+    this.scoreText = this.add.text(8, 8, `resources: ${this.score}`, {
       fontSize: "12px",
       fill: "#000"
     });
 
+    // add resources
+    resources = this.physics.add.group({
+      key: "resource",
+      repeat: 3,
+      setXY: {
+        x: 100,
+        y: 100,
+        stepX: 20
+      }
+    });
+
+    // create buildings group
+    this.buildings = this.physics.add.staticGroup();
+
     // make all tiles in Trees collidable
-    trees.setCollisionByExclusion([-1]);
+    trees.setCollisionByExclusTion([-1]);
 
     //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
     this.anims.create({
@@ -118,6 +142,18 @@ var WorldScene = new Phaser.Class({
     // don't walk on trees
     this.physics.add.collider(this.player, trees);
 
+    // don't walk on buildings
+    this.physics.add.collider(this.player, this.buildings);
+
+    // make resources collectable
+    this.physics.add.overlap(
+      this.player,
+      resources,
+      collectResource,
+      null,
+      this
+    );
+
     // limit camera to map
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     this.cameras.main.startFollow(this.player);
@@ -130,8 +166,8 @@ var WorldScene = new Phaser.Class({
     //    this.controls.update(delta);
 
     // update score position
-    scoreText.x = this.cameras.main.scrollX + 8;
-    scoreText.y = this.cameras.main.scrollY + 8;
+    this.scoreText.x = this.cameras.main.scrollX + 8;
+    this.scoreText.y = this.cameras.main.scrollY + 8;
 
     this.player.body.setVelocity(0);
 
@@ -166,6 +202,15 @@ var WorldScene = new Phaser.Class({
       this.player.anims.play("space", true);
     } else {
       this.player.anims.stop();
+    }
+
+    // Create building
+    if (this.cursors.space.isDown) {
+      if (this.score >= 10) {
+        this.buildings.create(this.player.x, this.player.y, "building");
+        this.score -= 10;
+        this.scoreText.setText(`resources: ${this.score}`);
+      }
     }
   }
 });
