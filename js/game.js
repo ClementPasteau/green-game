@@ -216,8 +216,8 @@ var WorldScene = new Phaser.Class({
 var config = {
   type: Phaser.AUTO,
   parent: "content",
-  width: 320,
-  height: 240,
+  width: window.innerWidth / window.devicePixelRatio,
+  height: window.innerHeight / window.devicePixelRatio,
   zoom: 2,
   pixelArt: true,
   physics: {
