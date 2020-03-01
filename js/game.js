@@ -65,9 +65,6 @@ var WorldScene = new Phaser.Class({
     var rocks = map.createStaticLayer("Rocks", tilesPokemon, 0, 0);
     var trees = map.createStaticLayer("Trees", tiles, 0, 0);
 
-    // Track space key toggle
-    this.spaceKeyWasDown = false;
-
     // add resources
     resources = this.physics.add.group({
       key: "resource",
@@ -123,7 +120,7 @@ var WorldScene = new Phaser.Class({
 
     // Anim for spell using
     this.anims.create({
-      key: "space",
+      key: "spellAnim",
       frames: this.anims.generateFrameNumbers("spell", {
         frames: [12, 13, 14, 15, 16, 17]
       }),
@@ -214,6 +211,14 @@ var WorldScene = new Phaser.Class({
 
     // user input
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    var createBuilding = this.createBuilding.bind(this);
+    this.input.keyboard.on("keydown", function(event) {
+      // console.log("TCL: event", event.keyCode);
+      if (event.keyCode === Phaser.Input.Keyboard.KeyCodes.SPACE) {
+        createBuilding();
+      }
+    });
   },
   update: function(time, delta) {
     // update texts position
@@ -254,19 +259,10 @@ var WorldScene = new Phaser.Class({
       this.player.anims.play("up", true);
     } else if (this.cursors.down.isDown) {
       this.player.anims.play("down", true);
-    } else if (this.cursors.space.isDown) {
-      this.player.anims.play("space", true);
+    } else if (this.cursors.shift.isDown) {
+      this.player.anims.play("spellAnim", true);
     } else {
       this.player.anims.stop();
-    }
-
-    // Create building
-    if (this.spaceKeyWasDown && !this.cursors.space.isDown) {
-      if (this.resourcesScore >= 10) {
-        this.buildings.create(this.player.x, this.player.y, "building");
-        this.resourcesScore -= 10;
-        this.scoreRatio += 1;
-      }
     }
 
     // refresh texts
@@ -290,6 +286,13 @@ var WorldScene = new Phaser.Class({
         { fontSize: "32px", fill: "#fff" }
       );
       gameOverText.setDepth(1);
+    }
+  },
+  createBuilding: function() {
+    if (this.resourcesScore >= 10) {
+      this.buildings.create(this.player.x, this.player.y, "building");
+      this.resourcesScore -= 10;
+      this.scoreRatio += 1;
     }
   }
 });
