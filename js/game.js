@@ -66,15 +66,25 @@ var WorldScene = new Phaser.Class({
     var trees = map.createStaticLayer("Trees", tiles, 0, 0);
 
     // add resources
-    resources = this.physics.add.group({
-      key: "resource",
-      repeat: 3,
-      setXY: {
-        x: 100,
-        y: 100,
-        stepX: 20
-      }
-    });
+    resources = this.physics.add.staticGroup();
+    resources.create(70, 312, "resource");
+    resources.create(87, 312, "resource");
+    resources.create(104, 312, "resource");
+    resources.create(121, 312, "resource");
+    resources.create(70, 329, "resource");
+    resources.create(87, 329, "resource");
+    resources.create(104, 329, "resource");
+    resources.create(121, 329, "resource");
+    resources.create(70, 345, "resource");
+    resources.create(87, 345, "resource");
+    resources.create(104, 345, "resource");
+    resources.create(121, 345, "resource");
+    resources.create(70, 361, "resource");
+    resources.create(87, 361, "resource");
+    resources.create(104, 361, "resource");
+    resources.create(121, 361, "resource");
+    resources.create(87, 378, "resource");
+    resources.create(104, 378, "resource");
 
     // create buildings group
     this.buildings = this.physics.add.staticGroup();
