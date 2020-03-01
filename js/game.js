@@ -13,9 +13,13 @@ var BootScene = new Phaser.Class({
     this.load.tilemapTiledJSON("map", "assets/map/map.json");
 
     // our two characters
-    this.load.spritesheet("player", "assets/RPG_assets.png", {
-      frameWidth: 16,
-      frameHeight: 16
+    this.load.spritesheet("player", "assets/move.png", {
+      frameWidth: 26,
+      frameHeight: 27
+    });
+    this.load.spritesheet("spell", "assets/spell.png", {
+      frameWidth: 26,
+      frameHeight: 27
     });
   },
 
@@ -52,7 +56,7 @@ var WorldScene = new Phaser.Class({
     this.anims.create({
       key: "left",
       frames: this.anims.generateFrameNumbers("player", {
-        frames: [1, 7, 1, 13]
+        frames: [8, 9, 10, 11, 12, 13, 14, 15]
       }),
       frameRate: 10,
       repeat: -1
@@ -62,7 +66,7 @@ var WorldScene = new Phaser.Class({
     this.anims.create({
       key: "right",
       frames: this.anims.generateFrameNumbers("player", {
-        frames: [1, 7, 1, 13]
+        frames: [8, 9, 10, 11, 12, 13, 14, 15]
       }),
       frameRate: 10,
       repeat: -1
@@ -70,7 +74,7 @@ var WorldScene = new Phaser.Class({
     this.anims.create({
       key: "up",
       frames: this.anims.generateFrameNumbers("player", {
-        frames: [2, 8, 2, 14]
+        frames: [16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
       }),
       frameRate: 10,
       repeat: -1
@@ -78,14 +82,24 @@ var WorldScene = new Phaser.Class({
     this.anims.create({
       key: "down",
       frames: this.anims.generateFrameNumbers("player", {
-        frames: [0, 6, 0, 12]
+        frames: [0, 1, 2, 3, 4, 5, 6, 7]
+      }),
+      frameRate: 10,
+      repeat: -1
+    });
+ 
+    // Anim for spell using 
+    this.anims.create({
+      key: "space",
+      frames: this.anims.generateFrameNumbers("spell", {
+        frames: [13, 14, 15, 16, 17, 18, 19]
       }),
       frameRate: 10,
       repeat: -1
     });
 
     // our player sprite created through the phycis system
-    this.player = this.physics.add.sprite(50, 100, "player", 6);
+    this.player = this.physics.add.sprite(50, 100, "player", 0);
 
     // don't go out of the map
     this.physics.world.bounds.width = map.widthInPixels;
@@ -102,6 +116,7 @@ var WorldScene = new Phaser.Class({
 
     // user input
     this.cursors = this.input.keyboard.createCursorKeys();
+    //addKeys( {'space' : Phaser.KeyCode.SPACEBAR } );
   },
   update: function(time, delta) {
     //    this.controls.update(delta);
