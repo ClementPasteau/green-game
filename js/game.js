@@ -11,7 +11,8 @@ var BootScene = new Phaser.Class({
     this.load.image("tiles-pokemon", "assets/map/spritesheet-pokemon.png");
 
     this.load.image("resource", "assets/green-orb.png");
-    this.load.image("building", "assets/wind-turbine.png");
+    this.load.image("windBuilding", "assets/wind-turbine.png");
+    this.load.image("solarBuilding", "assets/solar-panel.png");
 
     // map in json format
     this.load.tilemapTiledJSON("map", "assets/map/map.json");
@@ -77,7 +78,8 @@ var WorldScene = new Phaser.Class({
     });
 
     // create buildings group
-    this.buildings = this.physics.add.staticGroup();
+    this.windBuildings = this.physics.add.staticGroup();
+    this.solarBuildings = this.physics.add.staticGroup();
 
     // make all tiles in Trees collidable
     trees.setCollisionByExclusion([-1]);
@@ -140,7 +142,8 @@ var WorldScene = new Phaser.Class({
     this.physics.add.collider(this.player, trees);
 
     // don't walk on buildings
-    this.physics.add.collider(this.player, this.buildings);
+    this.physics.add.collider(this.player, this.windBuildings);
+    this.physics.add.collider(this.player, this.solarBuildings);
 
     // make resources collectable
     this.physics.add.overlap(
@@ -212,11 +215,15 @@ var WorldScene = new Phaser.Class({
     // user input
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    var createBuilding = this.createBuilding.bind(this);
+    var createWind = this.createWind.bind(this);
+    var createSolar = this.createSolar.bind(this);
     this.input.keyboard.on("keydown", function(event) {
       // console.log("TCL: event", event.keyCode);
-      if (event.keyCode === Phaser.Input.Keyboard.KeyCodes.SPACE) {
-        createBuilding();
+      if (event.keyCode === Phaser.Input.Keyboard.KeyCodes.W) {
+        createWind();
+      }
+      if (event.keyCode === Phaser.Input.Keyboard.KeyCodes.S) {
+        createSolar();
       }
     });
   },
@@ -288,11 +295,18 @@ var WorldScene = new Phaser.Class({
       gameOverText.setDepth(1);
     }
   },
-  createBuilding: function() {
+  createWind: function() {
     if (this.resourcesScore >= 10) {
-      this.buildings.create(this.player.x, this.player.y, "building");
+      this.windBuildings.create(this.player.x, this.player.y, "windBuilding");
       this.resourcesScore -= 10;
       this.scoreRatio += 1;
+    }
+  },
+  createSolar: function() {
+    if (this.resourcesScore >= 30) {
+      this.solarBuildings.create(this.player.x, this.player.y, "solarBuilding");
+      this.resourcesScore -= 30;
+      this.scoreRatio += 4;
     }
   }
 });
