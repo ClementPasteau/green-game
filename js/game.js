@@ -8,6 +8,7 @@ var BootScene = new Phaser.Class({
   preload: function() {
     // map tiles
     this.load.image("tiles", "assets/map/spritesheet.png");
+    this.load.image("tiles-pokemon", "assets/map/spritesheet-pokemon.png");
 
     // map in json format
     this.load.tilemapTiledJSON("map", "assets/map/map.json");
@@ -44,10 +45,12 @@ var WorldScene = new Phaser.Class({
 
     // first parameter is the name of the tilemap in tiled
     var tiles = map.addTilesetImage("spritesheet", "tiles");
+    var tilesPokemon = map.addTilesetImage("pokemon", "tiles-pokemon");
 
     // creating the layers
     var grass = map.createStaticLayer("Grass", tiles, 0, 0);
-    var obstacles = map.createStaticLayer("Obstacles", tiles, 0, 0);
+    var rocks = map.createStaticLayer("Rocks", tilesPokemon, 0, 0);
+    var trees = map.createStaticLayer("Trees", tiles, 0, 0);
 
     // create the score
     scoreText = this.add.text(8, 8, "resources: 0", {
@@ -55,8 +58,8 @@ var WorldScene = new Phaser.Class({
       fill: "#000"
     });
 
-    // make all tiles in obstacles collidable
-    obstacles.setCollisionByExclusion([-1]);
+    // make all tiles in Trees collidable
+    trees.setCollisionByExclusion([-1]);
 
     //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
     this.anims.create({
@@ -93,8 +96,8 @@ var WorldScene = new Phaser.Class({
       frameRate: 10,
       repeat: -1
     });
- 
-    // Anim for spell using 
+
+    // Anim for spell using
     this.anims.create({
       key: "space",
       frames: this.anims.generateFrameNumbers("spell", {
@@ -113,7 +116,7 @@ var WorldScene = new Phaser.Class({
     this.player.setCollideWorldBounds(true);
 
     // don't walk on trees
-    this.physics.add.collider(this.player, obstacles);
+    this.physics.add.collider(this.player, trees);
 
     // limit camera to map
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
