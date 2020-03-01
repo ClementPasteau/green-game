@@ -83,7 +83,7 @@ var WorldScene = new Phaser.Class({
     this.buildings = this.physics.add.staticGroup();
 
     // make all tiles in Trees collidable
-    trees.setCollisionByExclusTion([-1]);
+    trees.setCollisionByExclusion([-1]);
 
     //  animation with key 'left', we don't need left and right as we will use one and flip the sprite
     this.anims.create({
@@ -197,8 +197,6 @@ var WorldScene = new Phaser.Class({
     } else if (this.cursors.down.isDown) {
       this.player.anims.play("down", true);
     } else if (this.cursors.space.isDown) {
-      this.player.anims.play("space", true);
-    } else if (this.cursors..isDown) {
       this.player.anims.play("space", true);
     } else {
       this.player.anims.stop();
