@@ -35,8 +35,12 @@ var BootScene = new Phaser.Class({
 
 function collectResource(player, resource) {
   resource.disableBody(true, true);
-  this.score += 10;
-  this.scoreText.setText(`resources: ${this.score}`);
+  this.resourcesScore += 10;
+  this.resourcesText.setText(`resources: ${this.resourcesScore}`);
+}
+
+function calculateScore(score, scoreRatio) {
+  return `score: ${score} / ${scoreRatio >= 0 && "+"}${scoreRatio}`;
 }
 
 var WorldScene = new Phaser.Class({
@@ -60,13 +64,6 @@ var WorldScene = new Phaser.Class({
     var grass = map.createStaticLayer("Grass", tiles, 0, 0);
     var rocks = map.createStaticLayer("Rocks", tilesPokemon, 0, 0);
     var trees = map.createStaticLayer("Trees", tiles, 0, 0);
-
-    // create the score
-    this.score = 0;
-    this.scoreText = this.add.text(8, 8, `resources: ${this.score}`, {
-      fontSize: "12px",
-      fill: "#000"
-    });
 
     // Track space key toggle
     this.spaceKeyWasDown = false;
@@ -162,14 +159,48 @@ var WorldScene = new Phaser.Class({
     this.cameras.main.startFollow(this.player);
     this.cameras.main.roundPixels = true; // avoid tile bleed
 
+    // create the resourcesScore
+    this.resourcesScore = 0;
+    this.resourcesText = this.add.text(
+      8,
+      8,
+      `resources: ${this.resourcesScore}`,
+      {
+        fontSize: "12px",
+        fill: "#000"
+      }
+    );
+
+    // create the score
+    this.score = 0;
+    this.scoreRatio = 0;
+    this.scoreText = this.add.text(
+      this.cameras.main.scrollX + 150,
+      this.cameras.main.scrollY + 8,
+      calculateScore(this.score, this.scoreRatio),
+      {
+        fontSize: "12px",
+        fill: "#000"
+      }
+    );
+
+    timedEvent = this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        this.score = this.score + this.scoreRatio;
+      },
+      callbackScope: this,
+      loop: true
+    });
+
     // user input
     this.cursors = this.input.keyboard.createCursorKeys();
   },
   update: function(time, delta) {
-    //    this.controls.update(delta);
-
-    // update score position
-    this.scoreText.x = this.cameras.main.scrollX + 8;
+    // update texts position
+    this.resourcesText.x = this.cameras.main.scrollX + 8;
+    this.resourcesText.y = this.cameras.main.scrollY + 8;
+    this.scoreText.x = this.cameras.main.scrollX + 150;
     this.scoreText.y = this.cameras.main.scrollY + 8;
 
     this.player.body.setVelocity(0);
@@ -207,12 +238,16 @@ var WorldScene = new Phaser.Class({
 
     // Create building
     if (this.spaceKeyWasDown && !this.cursors.space.isDown) {
-      if (this.score >= 10) {
+      if (this.resourcesScore >= 10) {
         this.buildings.create(this.player.x, this.player.y, "building");
-        this.score -= 10;
-        this.scoreText.setText(`resources: ${this.score}`);
+        this.resourcesScore -= 10;
+        this.scoreRatio += 1;
       }
     }
+
+    // refresh texts
+    this.resourcesText.setText(`resources: ${this.resourcesScore}`);
+    this.scoreText.setText(calculateScore(this.score, this.scoreRatio));
 
     // Update space key state
     this.spaceKeyWasDown = this.cursors.space.isDown;
