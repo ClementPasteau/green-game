@@ -170,6 +170,7 @@ var WorldScene = new Phaser.Class({
         fill: "#000"
       }
     );
+    this.resourcesText.setDepth(1);
 
     // create the score
     this.score = 0;
@@ -183,15 +184,33 @@ var WorldScene = new Phaser.Class({
         fill: "#000"
       }
     );
+    this.scoreText.setDepth(1);
 
-    timedEvent = this.time.addEvent({
+    this.time.addEvent({
       delay: 1000,
       callback: () => {
-        this.score = this.score + this.scoreRatio;
+        if (this.timer > 0) {
+          this.score = this.score + this.scoreRatio;
+          this.timer = this.timer - 1;
+        }
       },
       callbackScope: this,
       loop: true
     });
+
+    // create the timer
+    this.timer = 30;
+    this.timerText = this.add.text(
+      8,
+      window.innerHeight / window.devicePixelRatio - 15,
+      `time left: ${this.timer}`,
+      {
+        fontSize: "12px",
+        fill: "#000"
+      }
+    );
+
+    this.timerText.setDepth(1);
 
     // user input
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -202,6 +221,11 @@ var WorldScene = new Phaser.Class({
     this.resourcesText.y = this.cameras.main.scrollY + 8;
     this.scoreText.x = this.cameras.main.scrollX + 150;
     this.scoreText.y = this.cameras.main.scrollY + 8;
+    this.timerText.x = this.cameras.main.scrollX + 8;
+    this.timerText.y =
+      this.cameras.main.scrollY +
+      window.innerHeight / window.devicePixelRatio -
+      15;
 
     this.player.body.setVelocity(0);
 
@@ -248,9 +272,25 @@ var WorldScene = new Phaser.Class({
     // refresh texts
     this.resourcesText.setText(`resources: ${this.resourcesScore}`);
     this.scoreText.setText(calculateScore(this.score, this.scoreRatio));
+    this.timerText.setText(`time left: ${this.timer}`);
 
     // Update space key state
     this.spaceKeyWasDown = this.cursors.space.isDown;
+
+    // trigger game over if time's up
+    if (this.timer === 0) {
+      this.player.body.setVelocity(0);
+      this.input.keyboard.destroy();
+      gameOverText = this.add.text(
+        this.cameras.main.scrollX + 180,
+        this.cameras.main.scrollY +
+          window.innerHeight / window.devicePixelRatio / 2 -
+          20,
+        `GAME OVER! SCORE: ${this.score}`,
+        { fontSize: "32px", fill: "#fff" }
+      );
+      gameOverText.setDepth(1);
+    }
   }
 });
 
