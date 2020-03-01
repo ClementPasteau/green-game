@@ -11,7 +11,7 @@ var BootScene = new Phaser.Class({
     this.load.image("tiles-pokemon", "assets/map/spritesheet-pokemon.png");
 
     this.load.image("resource", "assets/green-orb.png");
-    this.load.image("building", "assets/center.png");
+    this.load.image("building", "assets/wind-turbine.png");
 
     // map in json format
     this.load.tilemapTiledJSON("map", "assets/map/map.json");
